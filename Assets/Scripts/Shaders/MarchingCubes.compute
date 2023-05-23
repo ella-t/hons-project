@@ -2,6 +2,7 @@
 #pragma kernel MarchingCubes
 
 // Parameters
+float PerlinSeed;
 float VoxelScale;
 int sizeX;
 int sizeY;
@@ -304,10 +305,10 @@ float Density(float3 p)
     d = -p.y;
 
     // Add noise octaves
-	d += noiseTex.SampleLevel(samplerLinearRepeat, float2(p.x * 0.001, p.z * 0.001), 0).x * 16;
-	d += noiseTex.SampleLevel(samplerLinearRepeat, float2(p.x * 0.002, p.z * 0.002), 0).x * 8;
-	d += noiseTex.SampleLevel(samplerLinearRepeat, float2(p.x * 0.004, p.z * 0.004), 0).x * 4;
-	d += noiseTex.SampleLevel(samplerLinearRepeat, float2(p.x * 0.008, p.z * 0.008), 0).x * 2;
+	d += noiseTex.SampleLevel(samplerLinearRepeat, float2(PerlinSeed + p.x * 0.001, PerlinSeed + p.z * 0.001), 0).x * 16;
+	d += noiseTex.SampleLevel(samplerLinearRepeat, float2(PerlinSeed + p.x * 0.002, PerlinSeed + p.z * 0.002), 0).x * 8;
+	d += noiseTex.SampleLevel(samplerLinearRepeat, float2(PerlinSeed + p.x * 0.004, PerlinSeed + p.z * 0.004), 0).x * 4;
+	d += noiseTex.SampleLevel(samplerLinearRepeat, float2(PerlinSeed + p.x * 0.008, PerlinSeed + p.z * 0.008), 0).x * 2;
 
     return d;
 }

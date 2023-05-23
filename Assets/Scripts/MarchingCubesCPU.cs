@@ -17,6 +17,9 @@ public class MarchingCubesCPU : MonoBehaviour
     // Stores the normals, same order as computedVertices
     List<Vector3> computedNormals = new List<Vector3>();
 
+    // Random seed for current perlin coordinate
+    float perlinSeed;
+
     #region Lookup Tables
 
     // Lookup tables sourced from http://paulbourke.net/geometry/polygonise/marchingsource.cpp
@@ -313,10 +316,10 @@ public class MarchingCubesCPU : MonoBehaviour
         d = -p.y;
 
         // Add noise octaves
-        d += Mathf.PerlinNoise(p.x * 0.02f, p.z * 0.02f) * 12;
-        d += Mathf.PerlinNoise(p.x * 0.04f, p.z * 0.04f) * 6;
-        d += Mathf.PerlinNoise(p.x * 0.08f, p.z * 0.08f) * 3;
-        d += Mathf.PerlinNoise(p.x * 0.16f, p.z * 0.16f) * 1.5f;
+        d += Mathf.PerlinNoise(perlinSeed + p.x * 0.02f, perlinSeed + p.z * 0.02f) * 12;
+        d += Mathf.PerlinNoise(perlinSeed + p.x * 0.04f, perlinSeed + p.z * 0.04f) * 6;
+        d += Mathf.PerlinNoise(perlinSeed + p.x * 0.08f, perlinSeed + p.z * 0.08f) * 3;
+        d += Mathf.PerlinNoise(perlinSeed + p.x * 0.16f, perlinSeed + p.z * 0.16f) * 1.5f;
 
         return d;
     }
@@ -357,15 +360,19 @@ public class MarchingCubesCPU : MonoBehaviour
     void Start()
     {
 
-        Profiler.BeginSample("CPUCubes");
-        MarchingCubes();
-        Profiler.EndSample();
-        CreateMesh();
+        //Profiler.BeginSample("CPUCubes");
+        //MarchingCubes();
+        //Profiler.EndSample();
+        //CreateMesh();
+
+        perlinSeed = 0.0f;
 
     }
 
-    void MarchingCubes()
+    public void MarchingCubes()
     {
+
+        perlinSeed = Random.Range(-10.0f, 10.0f);
 
         // For each voxel
         for (int x = 0; x < VoxelGridSizeX; x++)
@@ -457,7 +464,7 @@ public class MarchingCubesCPU : MonoBehaviour
 
     }
 
-    void CreateMesh()
+    public void CreateMesh()
     {
 
         Mesh mesh = new Mesh();
@@ -477,5 +484,10 @@ public class MarchingCubesCPU : MonoBehaviour
 
     }
 
+    public void ClearArrays()
+    {
+        computedVertices = new List<Vector3>();
+        computedNormals = new List<Vector3>();
+    }
 
 }

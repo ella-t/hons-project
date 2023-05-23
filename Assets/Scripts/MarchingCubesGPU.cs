@@ -23,23 +23,31 @@ public class MarchingCubesGPU : MonoBehaviour
     // Stores the normals, same order as computedVertices
     List<Vector3> computedNormals = new List<Vector3>();
 
+    // Random seed for current perlin coordinate
+    float perlinSeed;
+
     void Start()
     {
-        Profiler.BeginSample("GPUCubes");
-        MarchingCubes();
-        CurateLists();
-        Profiler.EndSample();
-        CreateMesh();
+        //Profiler.BeginSample("GPUCubes");
+        //MarchingCubes();
+        //CurateLists();
+        //Profiler.EndSample();
+        //CreateMesh();
+
+        perlinSeed = 0.0f;
     }
 
     // Set up and run the marching cubes kernel
-    void MarchingCubes()
+    public void MarchingCubes()
     {
+
+        perlinSeed = Random.Range(-10.0f, 10.0f);
 
         VertexOut = new float[VoxelGridSizeX * VoxelGridSizeY * VoxelGridSizeZ * 16];
         NormalOut = new float[VoxelGridSizeX * VoxelGridSizeY * VoxelGridSizeZ * 16];
 
         // Set parameters
+        shader.SetFloat("PerlinSeed", perlinSeed);
         shader.SetFloat("VoxelScale", VoxelScale);
         shader.SetInt("sizeX", VoxelGridSizeX);
         shader.SetInt("sizeY", VoxelGridSizeY);
@@ -72,7 +80,7 @@ public class MarchingCubesGPU : MonoBehaviour
     }
 
     // Convert the outputs from the marching cubes kernel into usable vertex and normal lists
-    void CurateLists()
+    public void CurateLists()
     {
 
         for (int i = 0; i < VertexOut.Length; i+=4)
@@ -93,7 +101,7 @@ public class MarchingCubesGPU : MonoBehaviour
     }
 
     // Send vertex and normal data to attached mesh component
-    void CreateMesh()
+    public void CreateMesh()
     {
 
         Mesh mesh = new Mesh();
@@ -111,6 +119,12 @@ public class MarchingCubesGPU : MonoBehaviour
         }
         mesh.triangles = triangles;
 
+    }
+
+    public void ClearArrays()
+    {
+        computedVertices = new List<Vector3>();
+        computedNormals = new List<Vector3>();
     }
 
 }
