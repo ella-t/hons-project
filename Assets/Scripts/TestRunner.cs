@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TestRunner : MonoBehaviour
 {
@@ -23,6 +24,10 @@ public class TestRunner : MonoBehaviour
     public string pathToTimeLog = "/timelog.txt";
     protected bool timesLogged = false;
 
+    public bool started = false;
+
+    public Text iterationsDisplay;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,23 +37,26 @@ public class TestRunner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (_iterationsSoFar < iterations)
+        if (started)
         {
-            if (_framesToSkip > 0)
+            if (_iterationsSoFar < iterations)
             {
-                _framesToSkip--;
-            }
-            else
-            {
-                RunMarchingCubes();
+                if (_framesToSkip > 0)
+                {
+                    _framesToSkip--;
+                }
+                else
+                {
+                    RunMarchingCubes();
 
-                _iterationsSoFar++;
-                _framesToSkip = SkipFrames;
+                    _iterationsSoFar++;
+                    _framesToSkip = SkipFrames;
+                }
             }
-        }
-        else if (timesLogged == false)
-        {
-            RecordTimesToLog();
+            else if (timesLogged == false)
+            {
+                RecordTimesToLog();
+            }
         }
     }
 
@@ -108,5 +116,21 @@ public class TestRunner : MonoBehaviour
 
         Debug.Log("Finished writing to file.");
 
+    }
+
+    public void SetStarted(bool s)
+    {
+        started = s;
+    }
+
+    public void SetRunOnGPU(bool b)
+    {
+        runOnGPU = b;
+    }
+
+    public void SetIterations(float i)
+    {
+        iterations = Mathf.RoundToInt(i);
+        iterationsDisplay.text = iterations.ToString();
     }
 }

@@ -12,6 +12,12 @@ public class CameraControl : MonoBehaviour
 
     Vector2 rotation = Vector3.zero;
 
+    public bool Locked = true;
+
+    public void Unloack()
+    {
+        Locked = false;
+    }
     void Start()
     {
         cam = GetComponent<Camera>();
@@ -20,41 +26,44 @@ public class CameraControl : MonoBehaviour
     void Update()
     {
 
-        Vector3 movement = Vector3.zero;
-
-        if (Input.GetKey(KeyCode.W))
+        if (!Locked)
         {
-            movement += cam.transform.forward * moveSpeed;
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            movement -= cam.transform.forward * moveSpeed;
-        }
+            Vector3 movement = Vector3.zero;
 
-        if(Input.GetKey(KeyCode.D))
-        {
-            movement += cam.transform.right * moveSpeed;
-        }
-        else if (Input.GetKey(KeyCode.A)) 
-        {
-            movement -= cam.transform.right * moveSpeed;
-        }
+            if (Input.GetKey(KeyCode.W))
+            {
+                movement += cam.transform.forward * moveSpeed;
+            }
+            else if (Input.GetKey(KeyCode.S))
+            {
+                movement -= cam.transform.forward * moveSpeed;
+            }
 
-        if (Input.GetKey(KeyCode.E))
-        {
-            movement += Vector3.up * moveSpeed;
+            if (Input.GetKey(KeyCode.D))
+            {
+                movement += cam.transform.right * moveSpeed;
+            }
+            else if (Input.GetKey(KeyCode.A))
+            {
+                movement -= cam.transform.right * moveSpeed;
+            }
+
+            if (Input.GetKey(KeyCode.E))
+            {
+                movement += Vector3.up * moveSpeed;
+            }
+            else if (Input.GetKey(KeyCode.Q))
+            {
+                movement -= Vector3.up * moveSpeed;
+            }
+
+            cam.transform.Translate(movement * Time.deltaTime, Space.World);
+
+            rotation.y += Input.GetAxis("Mouse X");
+            rotation.x += -Input.GetAxis("Mouse Y");
+
+            transform.eulerAngles = rotation * lookSpeed;
         }
-        else if (Input.GetKey(KeyCode.Q)) 
-        {
-            movement -= Vector3.up * moveSpeed;
-        }
-
-        cam.transform.Translate(movement * Time.deltaTime, Space.World);
-
-        rotation.y += Input.GetAxis("Mouse X");
-        rotation.x += -Input.GetAxis("Mouse Y");
-
-        transform.eulerAngles = rotation * lookSpeed;
 
     }
 }
